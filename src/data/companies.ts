@@ -1,0 +1,80 @@
+export const companies = [
+  {
+    id: '1',
+    name: 'Stockholms Begravningsbyrå',
+    city: 'Stockholm',
+    description: 'Vi erbjuder personlig service och hjälper er med allt kring begravningen. Med över 20 års erfarenhet ger vi er trygghet i en svår stund.',
+    services: ['Begravning', 'Juridisk rådgivning', 'Bouppteckning'],
+    phone: '08-123 45 67',
+    email: 'info@stockholmsbegravningsbyra.se',
+    website: 'https://stockholmsbegravningsbyra.se',
+    verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '2',
+    name: 'Göteborgs Begravningsservice',
+    city: 'Göteborg',
+    description: 'Erfaren begravningsbyrå som hjälper er med alla praktiska arrangemang kring begravningen. Vi finns här för er dygnet runt.',
+    services: ['Begravning', 'Gravsten', 'Dödsbo', 'Flyttfirma'],
+    phone: '031-123 45 67',
+    email: 'info@gbgbegravning.se',
+    website: 'https://gbgbegravning.se',
+    verified: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '3',
+    name: 'Malmö Begravning & Juridik',
+    city: 'Malmö',
+    description: 'Vi erbjuder helhetslösningar med både begravningstjänster och juridisk hjälp. Låt oss ta hand om allt det praktiska.',
+    services: ['Begravning', 'Juridisk rådgivning', 'Bouppteckning', 'Florist'],
+    phone: '040-123 45 67',
+    email: 'info@malmobegravning.se',
+    website: 'https://malmobegravning.se',
+    verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '4',
+    name: 'Uppsala Flyttservice',
+    city: 'Uppsala',
+    description: 'Professionell flyttfirma med stor erfarenhet av dödsbon. Vi hjälper er med packning, flyttning och transport.',
+    services: ['Flyttfirma', 'Städning'],
+    phone: '018-123 45 67',
+    email: 'info@uppsalaflytt.se',
+    website: 'https://uppsalaflytt.se',
+    verified: false,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '5',
+    name: 'Västerås Catering',
+    city: 'Västerås',
+    description: 'Vi ordnar minnesvärda minnesstunder med högkvalitativ catering anpassad efter era önskemål.',
+    services: ['Catering'],
+    phone: '021-123 45 67',
+    email: 'info@vasterascatering.se',
+    website: 'https://vasterascatering.se',
+    verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  },
+  {
+    id: '6',
+    name: 'Örebro Fastighetsmäklare',
+    city: 'Örebro',
+    description: 'Specialiserade på försäljning av dödsbon med stor erfarenhet och professionellt bemötande.',
+    services: ['Fastighetsmäklare'],
+    phone: '019-123 45 67',
+    email: 'info@orebromaklare.se',
+    website: 'https://orebromaklare.se',
+    verified: true,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
+  }
+]
