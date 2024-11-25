@@ -1,17 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: [],
   },
   poweredByHeader: false,
   compress: true,
   generateEtags: true,
-  optimizeFonts: true,
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',
-  }
+  },
+  // Ta bort swcMinify och optimizeFonts då de är default i Next.js 15
 }
 
 module.exports = nextConfig
