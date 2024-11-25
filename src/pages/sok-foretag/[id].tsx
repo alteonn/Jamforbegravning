@@ -35,7 +35,9 @@ const serviceIcons = {
   'Fastighetsmäklare': BuildingOfficeIcon,
   'Dödsbo': UserGroupIcon,
   'Gravsten': HomeIcon
-}
+} as const;
+
+type ServiceType = keyof typeof serviceIcons;
 
 export default function CompanyDetail() {
   const [company, setCompany] = useState<Company | null>(null)
@@ -59,7 +61,7 @@ export default function CompanyDetail() {
         .single()
 
       if (error) throw error
-      setCompany(data)
+      setCompany(data as Company)
     } catch (error) {
       console.error('Error fetching company:', error)
       router.push('/sok-foretag')
@@ -190,7 +192,7 @@ export default function CompanyDetail() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {company.services.map((service) => {
-                const Icon = serviceIcons[service] || BuildingOfficeIcon
+                const Icon = serviceIcons[service as ServiceType] ?? BuildingOfficeIcon;
                 return (
                   <div
                     key={service}
@@ -198,14 +200,14 @@ export default function CompanyDetail() {
                   >
                     <div className="flex items-center mb-4">
                       <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-warm-100 text-warm-700">
-                        <Icon className="h-6 w-6" />
+                        <Icon className="h-6 w-6" aria-hidden="true" />
                       </div>
                     </div>
                     <h3 className="text-xl font-medium text-stone-850">
                       {service}
                     </h3>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -214,11 +216,13 @@ export default function CompanyDetail() {
         {/* Contact Section */}
         <section className="relative py-24">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className={`bg-white rounded-3xl p-12 ${
-              company.verified 
-                ? 'border-2 border-warm-500 shadow-xl' 
-                : 'border border-warm-100 shadow-lg'
-            }`}>
+            <div 
+              className={`bg-white rounded-3xl p-12 ${
+                company.verified 
+                  ? 'border-2 border-warm-500 shadow-xl' 
+                  : 'border border-warm-100 shadow-lg'
+              }`}
+            >
               <h2 className="text-3xl font-serif font-medium text-stone-850 mb-8">
                 Kontaktuppgifter
               </h2>
