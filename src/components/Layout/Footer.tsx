@@ -108,9 +108,23 @@ export default function Footer() {
         {/* Bottom section */}
         <div className="mt-12 pt-8 border-t border-warm-100">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm">
-              © {new Date().getFullYear()} JämförBegravning. Alla rättigheter förbehållna.
-            </p>
+            <div className="flex flex-col items-center md:items-start space-y-2 md:space-y-0">
+              <p className="text-gray-500 text-sm">
+                © {new Date().getFullYear()} JämförBegravning. Alla rättigheter förbehållna.
+              </p>
+              <div className="flex items-center text-sm text-gray-500">
+                <span className="mx-2">{'<>'}</span>
+                <span>Utvecklad av</span>
+                <a 
+                  href="https://almfors.se" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-warm-700 hover:text-warm-800 ml-1"
+                >
+                  Almfors
+                </a>
+              </div>
+            </div>
             <div className="flex space-x-6 mt-4 md:mt-0">
               {navigation.legal.map((item) => (
                 <Link
