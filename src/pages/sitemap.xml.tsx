@@ -5,7 +5,10 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://jamforbegravning.s
 
 function generateSiteMap(articles: any[], companies: any[]) {
   return `<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml"
+            xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+            xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
       <!-- Statiska sidor -->
       <url>
         <loc>${SITE_URL}</loc>
@@ -72,10 +75,15 @@ function generateSiteMap(articles: any[], companies: any[]) {
 
       <!-- Företag -->
       ${companies
-        .map(({ id, updated_at }) => `
+        .map(({ id, updated_at, city }) => `
           <url>
             <loc>${SITE_URL}/sok-foretag/${id}</loc>
             <lastmod>${updated_at}</lastmod>
+            <changefreq>weekly</changefreq>
+            <priority>0.7</priority>
+          </url>
+          <url>
+            <loc>${SITE_URL}/stader/${city.toLowerCase()}</loc>
             <changefreq>weekly</changefreq>
             <priority>0.7</priority>
           </url>
@@ -84,7 +92,6 @@ function generateSiteMap(articles: any[], companies: any[]) {
     </urlset>`
 }
 
-// Lägg till en default export för att tillfredsställa Next.js krav
 export default function Sitemap() {
   return null
 }
@@ -104,12 +111,13 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // Hämta alla företag
   const { data: companies } = await supabase
     .from('companies')
-    .select('id, updated_at')
+    .select('id, updated_at, city')
     .order('updated_at', { ascending: false })
 
   const sitemap = generateSiteMap(articles || [], companies || [])
 
   res.setHeader('Content-Type', 'text/xml')
+  res.setHeader('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate')
   res.write(sitemap)
   res.end()
 
