@@ -27,6 +27,7 @@ const SearchSection = () => {
     city: '',
     serviceType: '',
     budget: '',
+    message: '',
     legalHelp: false,
     selectedServices: [] as string[]
   })
@@ -48,13 +49,42 @@ const SearchSection = () => {
     setIsSubmitting(true)
     setError(null)
 
+    // Översätt servicetyper till svenska
+    const serviceTypeTranslations: { [key: string]: string } = {
+      'urn': 'Urnbegravning',
+      'simple': 'Enkel begravning',
+      'classic': 'Klassisk begravning',
+      'premium': 'Stilfull begravning',
+      'custom': 'Anpassad begravning'
+    }
+
+    // Översätt budget till svenska
+    const budgetTranslations: { [key: string]: string } = {
+      'Under 25 000 kr': 'Under 25 000 kr',
+      '25 000 - 50 000 kr': '25 000 - 50 000 kr',
+      'Över 50 000 kr': 'Över 50 000 kr'
+    }
+
+    // Översätt valda tjänster till svenska namn
+    const selectedServiceNames = formData.selectedServices.map(id => {
+      const service = [...serviceTypes, ...additionalServices].find(s => s.id === id)
+      return service ? service.name : id
+    })
+
     const payload = {
-      ...formData,
-      selectedServices: formData.selectedServices.map(id => {
-        const service = [...serviceTypes, ...additionalServices].find(s => s.id === id)
-        return service ? service.name : id
-      }),
-      timestamp: new Date().toISOString()
+      form_type: 'search',
+      namn: formData.name,
+      telefon: formData.phone,
+      epost: formData.email,
+      stad: formData.city,
+      begravningstyp: serviceTypeTranslations[formData.serviceType] || formData.serviceType,
+      budget: budgetTranslations[formData.budget] || formData.budget,
+      meddelande: formData.message || 'Inget meddelande angivet',
+      juridisk_radgivning: formData.legalHelp ? 'Ja' : 'Nej',
+      valda_tjanster: selectedServiceNames,
+      tidstampel: new Date().toISOString(),
+      status: 'Ny förfrågan',
+      kalla: 'Webbformulär'
     }
 
     try {
@@ -63,6 +93,7 @@ const SearchSection = () => {
         mode: 'no-cors',
         headers: {
           'Accept': 'application/json',
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(payload)
       })
@@ -75,6 +106,7 @@ const SearchSection = () => {
         city: '',
         serviceType: '',
         budget: '',
+        message: '',
         legalHelp: false,
         selectedServices: []
       })
@@ -239,6 +271,21 @@ const SearchSection = () => {
               <option value="25 000 - 50 000 kr">25 000 - 50 000 kr</option>
               <option value="Över 50 000 kr">Över 50 000 kr</option>
             </select>
+          </div>
+
+          <div>
+            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+              Meddelande (valfritt)
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+              rows={4}
+              className="w-full rounded-xl border-gray-300 shadow-sm focus:border-warm-500 focus:ring-warm-500"
+              placeholder="Skriv ditt meddelande här..."
+            />
           </div>
 
           <div className="flex items-center">

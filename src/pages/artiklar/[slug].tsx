@@ -9,6 +9,7 @@ import type { Article } from '@/types/database'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import JsonLd from '@/components/SEO/JsonLd'
 
 const categories = [
   { id: 'ceremoni', name: 'Ceremoni' },
@@ -84,13 +85,57 @@ export default function ArticleDetail() {
   }
 
   const categoryName = categories.find(cat => cat.id === article.category)?.name || article.category
+  const canonicalUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/artiklar/${article.slug}`
+  
+  // Get first 155 characters of content without markdown
+  const description = article.content
+    .replace(/[#*_`~]/g, '') // Remove markdown syntax
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // Replace markdown links with just text
+    .substring(0, 155)
+    .trim() + '...'
+
+  // Structured data for article
+  const articleData = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: article.title,
+    description: description,
+    author: {
+      '@type': 'Organization',
+      name: 'Jämför Begravning'
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: 'Jämför Begravning',
+      logo: {
+        '@type': 'ImageObject',
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/logo.png`
+      }
+    },
+    datePublished: article.created_at,
+    dateModified: article.updated_at,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': canonicalUrl
+    }
+  }
 
   return (
     <div className="min-h-screen bg-warm-50">
       <Head>
-        <title>{article.title} | Jämför Begravning</title>
-        <meta name="description" content={article.content.substring(0, 155)} />
+        <title>{`${article.title} | Jämför Begravning`}</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={article.title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content={canonicalUrl} />
+        <meta property="article:published_time" content={article.created_at} />
+        <meta property="article:modified_time" content={article.updated_at} />
+        <meta property="article:section" content={categoryName} />
+        <link rel="canonical" href={canonicalUrl} />
       </Head>
+
+      <JsonLd type="Article" data={articleData} />
 
       <Header />
 
@@ -123,6 +168,9 @@ export default function ArticleDetail() {
 
               <div className="text-sm text-gray-500">
                 Publicerad {new Date(article.created_at).toLocaleDateString('sv-SE')}
+                {article.updated_at !== article.created_at && 
+                  ` • Uppdaterad ${new Date(article.updated_at).toLocaleDateString('sv-SE')}`
+                }
               </div>
             </div>
           </div>

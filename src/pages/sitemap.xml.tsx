@@ -63,31 +63,63 @@ function generateSiteMap(articles: any[], companies: any[]) {
 
       <!-- Artiklar -->
       ${articles
-        .map(({ slug, updated_at }) => `
-          <url>
-            <loc>${SITE_URL}/artiklar/${slug}</loc>
-            <lastmod>${updated_at}</lastmod>
-            <changefreq>monthly</changefreq>
-            <priority>0.6</priority>
-          </url>
-        `)
+        .map(({ slug, updated_at, title }) => {
+          const escapedTitle = title.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;')
+          
+          return `
+            <url>
+              <loc>${SITE_URL}/artiklar/${slug}</loc>
+              <lastmod>${new Date(updated_at).toISOString()}</lastmod>
+              <changefreq>monthly</changefreq>
+              <priority>0.6</priority>
+              <news:news>
+                <news:publication>
+                  <news:name>Jämför Begravning</news:name>
+                  <news:language>sv</news:language>
+                </news:publication>
+                <news:publication_date>${new Date(updated_at).toISOString()}</news:publication_date>
+                <news:title>${escapedTitle}</news:title>
+              </news:news>
+            </url>
+          `
+        })
         .join('')}
 
       <!-- Företag -->
       ${companies
-        .map(({ id, updated_at, city }) => `
-          <url>
-            <loc>${SITE_URL}/sok-foretag/${id}</loc>
-            <lastmod>${updated_at}</lastmod>
-            <changefreq>weekly</changefreq>
-            <priority>0.7</priority>
-          </url>
-          <url>
-            <loc>${SITE_URL}/stader/${city.toLowerCase()}</loc>
-            <changefreq>weekly</changefreq>
-            <priority>0.7</priority>
-          </url>
-        `)
+        .map(({ id, updated_at, city, name }) => {
+          const escapedName = name.replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&apos;')
+          
+          return `
+            <url>
+              <loc>${SITE_URL}/sok-foretag/${id}</loc>
+              <lastmod>${new Date(updated_at).toISOString()}</lastmod>
+              <changefreq>weekly</changefreq>
+              <priority>0.7</priority>
+              <news:news>
+                <news:publication>
+                  <news:name>Jämför Begravning</news:name>
+                  <news:language>sv</news:language>
+                </news:publication>
+                <news:publication_date>${new Date(updated_at).toISOString()}</news:publication_date>
+                <news:title>${escapedName} i ${city}</news:title>
+              </news:news>
+            </url>
+            <url>
+              <loc>${SITE_URL}/stader/${city.toLowerCase()}</loc>
+              <changefreq>weekly</changefreq>
+              <priority>0.7</priority>
+            </url>
+          `
+        })
         .join('')}
     </urlset>`
 }
@@ -105,13 +137,13 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   // Hämta alla artiklar
   const { data: articles } = await supabase
     .from('articles')
-    .select('slug, updated_at')
+    .select('slug, updated_at, title')
     .order('updated_at', { ascending: false })
 
   // Hämta alla företag
   const { data: companies } = await supabase
     .from('companies')
-    .select('id, updated_at, city')
+    .select('id, updated_at, city, name')
     .order('updated_at', { ascending: false })
 
   const sitemap = generateSiteMap(articles || [], companies || [])
