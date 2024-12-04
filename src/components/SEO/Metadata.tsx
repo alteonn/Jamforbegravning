@@ -6,6 +6,11 @@ interface MetadataProps {
   canonicalUrl?: string
   ogImage?: string
   noindex?: boolean
+  cityName?: string
+  type?: 'website' | 'article'
+  publishedTime?: string
+  modifiedTime?: string
+  articleSection?: string
 }
 
 export default function Metadata({
@@ -13,25 +18,45 @@ export default function Metadata({
   description,
   canonicalUrl = process.env.NEXT_PUBLIC_SITE_URL,
   ogImage = `${process.env.NEXT_PUBLIC_SITE_URL}/og-image.jpg`,
-  noindex = false
+  noindex = false,
+  cityName,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  articleSection
 }: MetadataProps) {
-  const fullTitle = `${title} | Jämför Begravning`
+  const fullTitle = cityName 
+    ? `${title} ${cityName} | Jämför Begravning`
+    : `${title} | Jämför Begravning`
 
   return (
     <Head>
+      {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       
       {/* Canonical URL */}
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+      <link rel="canonical" href={canonicalUrl} />
       
       {/* Open Graph */}
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={type} />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={ogImage} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:site_name" content="Jämför Begravning" />
+      <meta property="og:locale" content="sv_SE" />
+
+      {/* Article-specific meta tags */}
+      {type === 'article' && publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {type === 'article' && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
+      {type === 'article' && articleSection && (
+        <meta property="article:section" content={articleSection} />
+      )}
       
       {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -44,8 +69,15 @@ export default function Metadata({
       <meta name="googlebot" content={noindex ? 'noindex,nofollow' : 'index,follow'} />
       
       {/* Language */}
-      <meta property="og:locale" content="sv_SE" />
       <meta httpEquiv="content-language" content="sv-se" />
+
+      {/* Geo Meta Tags for City Pages */}
+      {cityName && (
+        <>
+          <meta name="geo.region" content="SE" />
+          <meta name="geo.placename" content={cityName} />
+        </>
+      )}
     </Head>
   )
 }

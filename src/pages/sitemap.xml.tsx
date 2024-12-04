@@ -9,7 +9,7 @@ function generateSiteMap(articles: any[], companies: any[]) {
             xmlns:xhtml="http://www.w3.org/1999/xhtml"
             xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
             xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-      <!-- Statiska sidor -->
+      <!-- Static Pages -->
       <url>
         <loc>${SITE_URL}</loc>
         <changefreq>daily</changefreq>
@@ -61,7 +61,7 @@ function generateSiteMap(articles: any[], companies: any[]) {
         <priority>0.7</priority>
       </url>
 
-      <!-- Artiklar -->
+      <!-- Articles -->
       ${articles
         .map(({ slug, updated_at, title }) => {
           const escapedTitle = title.replace(/&/g, '&amp;')
@@ -89,7 +89,7 @@ function generateSiteMap(articles: any[], companies: any[]) {
         })
         .join('')}
 
-      <!-- Företag -->
+      <!-- Companies and Cities -->
       ${companies
         .map(({ id, updated_at, city, name }) => {
           const escapedName = name.replace(/&/g, '&amp;')
@@ -134,13 +134,13 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  // Hämta alla artiklar
+  // Fetch all articles
   const { data: articles } = await supabase
     .from('articles')
     .select('slug, updated_at, title')
     .order('updated_at', { ascending: false })
 
-  // Hämta alla företag
+  // Fetch all companies
   const { data: companies } = await supabase
     .from('companies')
     .select('id, updated_at, city, name')

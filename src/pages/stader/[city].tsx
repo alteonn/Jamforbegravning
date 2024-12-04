@@ -7,6 +7,7 @@ import ServicesSection from '../../components/Home/ServicesSection'
 import ProcessSection from '../../components/Home/ProcessSection'
 import TestimonialsSection from '../../components/Home/TestimonialsSection'
 import FAQSection from '../../components/Home/FAQSection'
+import Metadata from '@/components/SEO/Metadata'
 import JsonLd from '@/components/SEO/JsonLd'
 
 export default function CityPage() {
@@ -19,13 +20,15 @@ export default function CityPage() {
     : ''
 
   const canonicalUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/stader/${city}`
+  const pageTitle = `Begravningsbyrå ${cityName}`
+  const pageDescription = `Hitta och jämför begravningsbyråer i ${cityName}. Vi hjälper dig att hitta rätt begravningsbyrå och spara pengar. Få kostnadsfria offerter från kvalitetssäkrade byråer.`
 
   // Structured data for local business
   const localBusinessData = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: `Begravningsbyråer i ${cityName}`,
-    description: `Hitta och jämför begravningsbyråer i ${cityName}. Vi hjälper dig att hitta rätt begravningsbyrå och spara pengar.`,
+    description: pageDescription,
     areaServed: {
       '@type': 'City',
       name: cityName,
@@ -39,32 +42,50 @@ export default function CityPage() {
     }
   }
 
+  // Breadcrumb structured data
+  const breadcrumbData = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        item: {
+          '@id': process.env.NEXT_PUBLIC_SITE_URL,
+          name: 'Hem'
+        }
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        item: {
+          '@id': `${process.env.NEXT_PUBLIC_SITE_URL}/stader`,
+          name: 'Städer'
+        }
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        item: {
+          '@id': canonicalUrl,
+          name: `Begravningsbyrå ${cityName}`
+        }
+      }
+    ]
+  }
+
   return (
     <div className="min-h-screen bg-warm-50">
-      <Head>
-        <title>{`Begravningsbyrå ${cityName} | Jämför priser & tjänster | Jämför Begravning`}</title>
-        <meta 
-          name="description" 
-          content={`Hitta och jämför begravningsbyråer i ${cityName}. Vi hjälper dig att hitta rätt begravningsbyrå och spara pengar. Få kostnadsfria offerter från kvalitetssäkrade byråer.`}
-        />
-        <meta property="og:title" content={`Begravningsbyrå ${cityName} | Jämför Begravning`} />
-        <meta 
-          property="og:description" 
-          content={`Hitta och jämför begravningsbyråer i ${cityName}. Vi hjälper dig att hitta rätt begravningsbyrå och spara pengar.`}
-        />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:site_name" content="Jämför Begravning" />
-        <meta property="og:locale" content="sv_SE" />
-
-        {/* Geo Meta Tags */}
-        <meta name="geo.region" content="SE" />
-        <meta name="geo.placename" content={cityName} />
-        
-        <link rel="canonical" href={canonicalUrl} />
-      </Head>
+      <Metadata 
+        title={pageTitle}
+        description={pageDescription}
+        canonicalUrl={canonicalUrl}
+        cityName={cityName}
+        type="website"
+      />
 
       <JsonLd type="LocalBusiness" data={localBusinessData} />
+      <JsonLd type="BreadcrumbList" data={breadcrumbData} />
 
       <Header />
 

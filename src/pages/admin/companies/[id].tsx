@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useSupabaseClient } from '@supabase/auth-helpers-react'
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftIcon, TrashIcon } from '@heroicons/react/24/outline'
 
 const serviceTypes = [
   'Begravning',
@@ -148,6 +148,15 @@ export default function EditCompany() {
           : lead
       )
     }))
+  }
+
+  const handleDeleteLead = (leadId: string) => {
+    if (confirm('Är du säker på att du vill radera denna lead?')) {
+      setFormData(prev => ({
+        ...prev,
+        leads: prev.leads.filter(lead => lead.id !== leadId)
+      }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -426,16 +435,26 @@ export default function EditCompany() {
                           <h4 className="font-medium text-stone-850">{lead.name}</h4>
                           <p className="text-sm text-gray-600">{lead.email} • {lead.phone}</p>
                         </div>
-                        <select
-                          value={lead.status}
-                          onChange={(e) => handleUpdateLeadStatus(lead.id, e.target.value as Lead['status'])}
-                          className="rounded-lg border-gray-300 text-sm"
-                        >
-                          <option value="new">Ny</option>
-                          <option value="contacted">Kontaktad</option>
-                          <option value="converted">Konverterad</option>
-                          <option value="lost">Förlorad</option>
-                        </select>
+                        <div className="flex items-center gap-2">
+                          <select
+                            value={lead.status}
+                            onChange={(e) => handleUpdateLeadStatus(lead.id, e.target.value as Lead['status'])}
+                            className="rounded-lg border-gray-300 text-sm"
+                          >
+                            <option value="new">Ny</option>
+                            <option value="contacted">Kontaktad</option>
+                            <option value="converted">Konverterad</option>
+                            <option value="lost">Förlorad</option>
+                          </select>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteLead(lead.id)}
+                            className="p-1 text-red-600 hover:text-red-800 rounded-lg hover:bg-red-50"
+                            title="Radera lead"
+                          >
+                            <TrashIcon className="h-5 w-5" />
+                          </button>
+                        </div>
                       </div>
                       {lead.notes && (
                         <p className="text-sm text-gray-600 bg-gray-50 p-2 rounded">
