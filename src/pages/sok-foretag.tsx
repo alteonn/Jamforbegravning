@@ -11,6 +11,7 @@ export default function SearchCompanies() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedService, setSelectedService] = useState('')
   const [selectedCity, setSelectedCity] = useState('')
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false)
   const [companies, setCompanies] = useState<Company[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const supabase = useSupabaseClient()
@@ -24,6 +25,7 @@ export default function SearchCompanies() {
       const { data, error } = await supabase
         .from('companies')
         .select('*')
+        .order('verified', { ascending: false }) // Verified companies first
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -40,7 +42,8 @@ export default function SearchCompanies() {
                          company.description.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesService = !selectedService || company.services.includes(selectedService)
     const matchesCity = !selectedCity || company.city.toLowerCase().includes(selectedCity.toLowerCase())
-    return matchesSearch && matchesService && matchesCity
+    const matchesVerified = !showVerifiedOnly || company.verified
+    return matchesSearch && matchesService && matchesCity && matchesVerified
   })
 
   const handleContactClick = (e: React.MouseEvent, type: 'phone' | 'email', value: string) => {
@@ -123,6 +126,17 @@ export default function SearchCompanies() {
                   className="block w-full md:w-48 pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-warm-500 focus:border-warm-500"
                 />
               </div>
+              <button
+                onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
+                className={`flex items-center justify-center px-4 py-3 rounded-xl border transition-colors duration-200 ${
+                  showVerifiedOnly
+                    ? 'bg-warm-700 text-white border-warm-700'
+                    : 'bg-white text-warm-700 border-warm-200 hover:bg-warm-50'
+                }`}
+              >
+                <ShieldCheckIcon className="h-5 w-5 mr-2" />
+                <span>Verifierade företag</span>
+              </button>
             </div>
 
             {isLoading ? (

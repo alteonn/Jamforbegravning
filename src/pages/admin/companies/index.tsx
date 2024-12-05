@@ -10,8 +10,10 @@ import {
   CheckCircleIcon,
   XMarkIcon,
   MagnifyingGlassIcon,
-  FunnelIcon
+  FunnelIcon,
+  ShieldCheckIcon
 } from '@heroicons/react/24/outline'
+import BuildingOfficeIcon from '@heroicons/react/24/solid/BuildingOfficeIcon'
 
 type Company = {
   id: number
@@ -57,6 +59,7 @@ export default function CompaniesManagement() {
       const { data, error } = await supabase
         .from('companies')
         .select('*')
+        .order('verified', { ascending: false })
         .order('created_at', { ascending: false })
 
       if (error) throw error
@@ -136,6 +139,9 @@ export default function CompaniesManagement() {
     setVerificationFilter(null)
   }
 
+  const totalCompanies = companies.length
+  const verifiedCompanies = companies.filter(c => c.verified).length
+
   return (
     <div className="min-h-screen bg-warm-50">
       <Head>
@@ -154,9 +160,21 @@ export default function CompaniesManagement() {
         </div>
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-serif font-medium text-stone-850">
-            Hantera företag
-          </h1>
+          <div>
+            <h1 className="text-3xl font-serif font-medium text-stone-850">
+              Hantera företag
+            </h1>
+            <div className="mt-2 flex items-center space-x-4 text-gray-600">
+              <div className="flex items-center">
+                <BuildingOfficeIcon className="h-5 w-5 mr-2" />
+                <span>Totalt: {totalCompanies} företag</span>
+              </div>
+              <div className="flex items-center">
+                <ShieldCheckIcon className="h-5 w-5 mr-2 text-warm-700" />
+                <span>Verifierade: {verifiedCompanies} företag</span>
+              </div>
+            </div>
+          </div>
           <Link
             href="/admin/companies/new"
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-warm-700 hover:bg-warm-800"
